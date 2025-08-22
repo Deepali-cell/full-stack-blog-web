@@ -1,12 +1,12 @@
 import { ShowSingleArticle } from "@/components/allArticles/ShowSingleArticle";
 import { prisma } from "@/lib/prisma";
-import React from "react";
 
-interface SingleArticleParam {
-  params: { id?: string };
+interface PageProps {
+  params: { id: string };
+  searchParams?: Record<string, string | string[]>;
 }
 
-const Page: React.FC<SingleArticleParam> = async ({ params }) => {
+const Page = async ({ params }: PageProps) => {
   const article = await prisma.articles.findUnique({
     where: { id: params.id },
     include: {
