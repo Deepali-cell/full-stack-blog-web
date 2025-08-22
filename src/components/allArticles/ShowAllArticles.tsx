@@ -1,22 +1,19 @@
 "use client";
-
-import React, { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import Articles from "./Articles";
 import ArticleSkeleton from "./ArticleSkeleton";
 import { search_query } from "@/lib/fetchSearchQuery/search_query";
 
-interface SearchGetPropType {
-  searchParams?: { search?: string; page?: string };
-}
+const ShowAllArticles = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-const ShowAllArticles: React.FC<SearchGetPropType> = ({
-  searchParams = {},
-}) => {
-  const searchText = searchParams?.search ?? "";
-  const currentPage = parseInt(searchParams?.page ?? "1", 10);
-  const limit = 3; // Number of articles per page
+  const searchText = searchParams.get("search") || "";
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const limit = 3;
 
   const [articles, setArticles] = useState<any[]>([]);
   const [totalArticles, setTotalArticles] = useState<number>(0);
@@ -44,6 +41,11 @@ const ShowAllArticles: React.FC<SearchGetPropType> = ({
 
   const totalPages = Math.ceil(totalArticles / limit);
 
+  // Function to change page without reloading
+  const changePage = (page: number) => {
+    router.push(`?search=${searchText}&page=${page}`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 mt-14">
       <main>
@@ -59,12 +61,10 @@ const ShowAllArticles: React.FC<SearchGetPropType> = ({
             variant="outline"
             className="flex items-center"
             disabled={currentPage <= 1}
-            asChild
+            onClick={() => changePage(currentPage - 1)}
           >
-            <a href={`?search=${searchText}&page=${currentPage - 1}`}>
-              <MoveLeftIcon className="w-4 h-4 mr-1" />
-              Prev
-            </a>
+            <MoveLeftIcon className="w-4 h-4 mr-1" />
+            Prev
           </Button>
 
           {[...Array(totalPages)].map((_, i) => (
@@ -75,9 +75,9 @@ const ShowAllArticles: React.FC<SearchGetPropType> = ({
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-800"
               } rounded-md`}
-              asChild
+              onClick={() => changePage(i + 1)}
             >
-              <a href={`?search=${searchText}&page=${i + 1}`}>{i + 1}</a>
+              {i + 1}
             </Button>
           ))}
 
@@ -85,12 +85,10 @@ const ShowAllArticles: React.FC<SearchGetPropType> = ({
             variant="outline"
             className="flex items-center"
             disabled={currentPage >= totalPages}
-            asChild
+            onClick={() => changePage(currentPage + 1)}
           >
-            <a href={`?search=${searchText}&page=${currentPage + 1}`}>
-              Next
-              <MoveRightIcon className="w-4 h-4 ml-1" />
-            </a>
+            Next
+            <MoveRightIcon className="w-4 h-4 ml-1" />
           </Button>
         </div>
       </main>

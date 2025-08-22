@@ -1,30 +1,40 @@
-"use client"; // Mark this file as a Client Component
+"use client";
 
-import React, { FormEvent, startTransition, useActionState } from "react";
+import React, { startTransition, useState } from "react";
 import { deleteArticleAction } from "@/actions/deleteArticleAction";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface DeleteButtonProps {
   articleId: string;
 }
 
 const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
-  const [formState, action, isPending] = useActionState(
-    deleteArticleAction.bind(null, articleId),
-    { errors: {} }
-  );
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleDelete = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    startTransition(() => {
-      action();
+  const handleDelete = () => {
+    setIsPending(true);
+    setError(null);
+
+    startTransition(async () => {
+      const res = await deleteArticleAction(articleId);
+
+      if (res.errors?.formErrors?.length) {
+        setError(res.errors.formErrors.join(", "));
+      } else {
+        router.refresh(); // ✅ Refresh after deletion
+      }
+
+      setIsPending(false);
     });
   };
 
   return (
-    <form onSubmit={handleDelete}>
+    <div>
       <Button
-        type="submit"
+        onClick={handleDelete}
         disabled={isPending}
         variant="ghost"
         size="sm"
@@ -32,12 +42,9 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
       >
         {isPending ? "Deleting..." : "Delete"}
       </Button>
-      {formState.errors?.formErrors && (
-        <span className="text-red-500 text-sm">
-          {formState.errors.formErrors.join(", ")}
-        </span>
-      )}
-    </form>
+
+      {error && <span className="text-red-500 text-sm">{error}</span>}
+    </div>
   );
 };
 

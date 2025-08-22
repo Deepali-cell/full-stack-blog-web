@@ -1,11 +1,20 @@
 "use server";
+
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
-export const deleteArticleAction = async (articleId: string) => {
+interface DeleteArticleResponse {
+  success?: boolean;
+  errors?: { formErrors: string[] };
+}
+
+export const deleteArticleAction = async (
+  articleId: string
+): Promise<DeleteArticleResponse> => {
   const { userId } = await auth();
 
-  // If user is not authenticated, return error
+  // If user is not authenticated
   if (!userId) {
     return { errors: { formErrors: ["You have to login first"] } };
   }
@@ -19,7 +28,7 @@ export const deleteArticleAction = async (articleId: string) => {
     return {
       errors: {
         formErrors: [
-          "User not found. Before deleting an article, please register first.",
+          "User not found. Please register before deleting an article.",
         ],
       },
     };
@@ -42,6 +51,9 @@ export const deleteArticleAction = async (articleId: string) => {
   await prisma.articles.delete({
     where: { id: articleId },
   });
+
+  // Revalidate the dashboard path
+  revalidatePath("/dashboard");
 
   return { success: true };
 };

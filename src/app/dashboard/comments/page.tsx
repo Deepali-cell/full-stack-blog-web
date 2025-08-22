@@ -86,7 +86,7 @@ const Page = async () => {
         ))
       ) : (
         <p className="text-center text-gray-500">
-          You haven't published any articles yet.
+          You haven`&apos;`t published any articles yet.
         </p>
       )}
     </div>

@@ -41,9 +41,11 @@ export async function ShowSingleArticle({ article }: ArticleDetailPageProps) {
     where: { articleId: article.id },
   });
 
-  // ✅ Get authentication details
+  // ✅ Get authentication details => clerk se -> clerkid -> se user detail -> userid get
   const { userId } = await auth();
-  let user = null;
+  type UserType = Awaited<ReturnType<typeof prisma.user.findUnique>>;
+  let user: UserType = null;
+
   let isLiked = false;
 
   if (userId) {
@@ -53,7 +55,7 @@ export async function ShowSingleArticle({ article }: ArticleDetailPageProps) {
 
     // ✅ If user exists, check if they liked the article
     if (user) {
-      isLiked = likes.some((like) => like.authorId === user.id);
+      isLiked = likes.some((like) => like.authorId === user?.id);
     }
   }
 
