@@ -1,7 +1,13 @@
 import { ShowSingleArticle } from "@/components/allArticles/ShowSingleArticle";
 import { prisma } from "@/lib/prisma";
 
-export default async function Page({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function Page({ params }: PageProps) {
   const article = await prisma.articles.findUnique({
     where: { id: params.id },
     include: {
