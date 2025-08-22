@@ -1,12 +1,7 @@
 import { ShowSingleArticle } from "@/components/allArticles/ShowSingleArticle";
 import { prisma } from "@/lib/prisma";
 
-interface PageProps {
-  params: { id: string };
-  searchParams?: Record<string, string | string[]>;
-}
-
-const Page = async ({ params }: PageProps) => {
+export default async function Page({ params }: { params: { id: string } }) {
   const article = await prisma.articles.findUnique({
     where: { id: params.id },
     include: {
@@ -29,6 +24,4 @@ const Page = async ({ params }: PageProps) => {
   }
 
   return <ShowSingleArticle article={article} />;
-};
-
-export default Page;
+}
