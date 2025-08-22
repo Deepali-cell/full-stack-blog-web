@@ -2,7 +2,7 @@
 import { clerkMiddleware, auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export default clerkMiddleware(async (req) => {
+export default clerkMiddleware(async () => {
   const { userId } = auth();
 
   if (!userId) {

@@ -7,6 +7,28 @@ import Articles from "./Articles";
 import ArticleSkeleton from "./ArticleSkeleton";
 import { search_query } from "@/lib/fetchSearchQuery/search_query";
 
+export type ArticleType = {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  featuredImage: string;
+  createdAt: Date;
+  authorId: string; // <-- add this
+  author: {
+    name: string;
+    email: string;
+    imageUrl: string | null;
+  };
+  comments: {
+    id: string;
+    body: string;
+    authorId: string;
+    articleId: string;
+    createdAt: Date;
+  }[];
+};
+
 const ShowAllArticles = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -15,7 +37,7 @@ const ShowAllArticles = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const limit = 3;
 
-  const [articles, setArticles] = useState<any[]>([]);
+  const [articles, setArticles] = useState<ArticleType[]>([]);
   const [totalArticles, setTotalArticles] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
