@@ -47,9 +47,9 @@ export default function ArticlesList() {
   };
 
   return (
-    <div>
+    <div className="pt-20">
       {loading ? <ArticleSkeleton /> : <Articles articles={articles} />}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex justify-center items-center gap-2">
         <Button
           disabled={currentPage <= 1}
           onClick={() => changePage(currentPage - 1)}
