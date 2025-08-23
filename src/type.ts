@@ -1,6 +1,18 @@
 // types.ts
 import type { Prisma } from "@prisma/client";
 
+export type ArticlePayload = Prisma.ArticlesGetPayload<{
+  include: {
+    author: {
+      select: {
+        name: true;
+        email: true;
+        imageUrl: true;
+      };
+    };
+  };
+}>;
+
 // Define the type for Comments with the included author
 export type CommentWithAuthor = Prisma.CommentsGetPayload<{
   include: {

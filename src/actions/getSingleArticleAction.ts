@@ -3,38 +3,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
-import { UserPayload } from "@/type";
-
-// Define a type for the data we will return
-export type ArticlePayload = Prisma.ArticlesGetPayload<{
-  include: {
-    author: {
-      select: {
-        name: true;
-        email: true;
-        imageUrl: true;
-      };
-    };
-  };
-}>;
-
-export type CommentsPayload = Prisma.CommentsGetPayload<{
-  include: {
-    author: {
-      select: {
-        name: true;
-        email: true;
-        imageUrl: true;
-      };
-    };
-  };
-}>[];
+import { ArticlePayload, CommentWithAuthor, UserPayload } from "@/type";
 
 export type LikesPayload = Prisma.LikesGetPayload<null>[];
 
 interface ArticleData {
   article: ArticlePayload | null;
-  comments: CommentsPayload;
+  comments: CommentWithAuthor[];
   likes: LikesPayload;
   isLiked: boolean;
 }
