@@ -1,8 +1,11 @@
-import React from "react";
-import ShowAllArticles from "../../../components/allArticles/ShowAllArticles";
+import ShowAllArticles from "@/components/allArticles/ShowAllArticles";
+import { Suspense } from "react";
 
-const Page = () => {
-  return <ShowAllArticles />;
-};
-
-export default Page;
+export default function Page() {
+  return (
+    // ✅ Wrap the client component in a Suspense boundary
+    <Suspense fallback={<div>Loading articles...</div>}>
+      <ShowAllArticles />
+    </Suspense>
+  );
+}

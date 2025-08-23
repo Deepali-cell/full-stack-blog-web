@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 
-const AboutPage = () => {
+const Page = () => {
   return (
     <div className="my-20  max-w-4xl mx-auto p-8 text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-extrabold mb-6">About Us</h1>
@@ -36,4 +36,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default Page;

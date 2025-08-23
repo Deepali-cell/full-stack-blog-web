@@ -1,68 +1,22 @@
+"use client";
+
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import type { Prisma } from "@prisma/client";
 import Image from "next/image";
 import LikeButton from "./articlesActionComponents/LikeButton";
 import CommentsList from "./articlesActionComponents/CommentsList";
 import CommentInput from "./articlesActionComponents/CommentInput";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import type { ShowSingleArticleProps } from "../../type";
 
-interface ArticleDetailPageProps {
-  article: Prisma.ArticlesGetPayload<{
-    include: {
-      author: {
-        select: {
-          name: true;
-          email: true;
-          imageUrl: true;
-        };
-      };
-    };
-  }>;
-}
-
-export async function ShowSingleArticle({ article }: ArticleDetailPageProps) {
-  // ✅ Fetch comments
-  const comments = await prisma.comments.findMany({
-    where: { articleId: article.id },
-    include: {
-      author: {
-        select: {
-          name: true,
-          email: true,
-          imageUrl: true,
-        },
-      },
-    },
-  });
-
-  // ✅ Fetch likes
-  const likes = await prisma.likes.findMany({
-    where: { articleId: article.id },
-  });
-
-  // ✅ Get authentication details => clerk se -> clerkid -> se user detail -> userid get
-  const { userId } = await auth();
-  type UserType = Awaited<ReturnType<typeof prisma.user.findUnique>>;
-  let user: UserType = null;
-
-  let isLiked = false;
-
-  if (userId) {
-    user = await prisma.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    // ✅ If user exists, check if they liked the article
-    if (user) {
-      isLiked = likes.some((like) => like.authorId === user?.id);
-    }
-  }
-
+export function ShowSingleArticle({
+  article,
+  initialComments,
+  initialLikes,
+  isLiked,
+}: ShowSingleArticleProps) {
   return (
     <div className="min-h-screen py-10">
       <main className="container mx-auto px-6 py-12">
-        {/* Top Section: Title, Author Details & Featured Image */}
+        {/* Top Section */}
         <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-8">
           <div className="flex-1">
             <div className="flex flex-wrap gap-2 mb-4">
@@ -92,14 +46,14 @@ export async function ShowSingleArticle({ article }: ArticleDetailPageProps) {
             <Image
               src={article.featuredImage}
               alt={article.title}
-              width={350} // Medium-sized image
+              width={350}
               height={250}
               className="rounded-lg shadow-lg object-cover"
             />
           </div>
         </header>
 
-        {/* Bottom Section: Article Content */}
+        {/* Article Content */}
         <section
           className="prose prose-lg dark:prose-invert max-w-none mb-12 dark:text-white leading-relaxed"
           dangerouslySetInnerHTML={{ __html: article.content }}
@@ -107,9 +61,13 @@ export async function ShowSingleArticle({ article }: ArticleDetailPageProps) {
       </main>
 
       <div className="mx-auto px-6">
-        <LikeButton likes={likes} articleId={article.id} isLiked={isLiked} />
+        <LikeButton
+          likes={initialLikes}
+          articleId={article.id}
+          isLiked={isLiked}
+        />
         <CommentInput articleId={article.id} />
-        <CommentsList comments={comments} />
+        <CommentsList comments={initialComments} />
       </div>
     </div>
   );

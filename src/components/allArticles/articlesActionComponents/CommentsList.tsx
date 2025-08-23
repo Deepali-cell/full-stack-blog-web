@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Prisma } from "@prisma/client";
 import React from "react";
@@ -16,7 +18,7 @@ interface CommentListProps {
   }>[];
 }
 
-const CommentsList: React.FC<CommentListProps> = async ({ comments }) => {
+const CommentsList: React.FC<CommentListProps> = ({ comments }) => {
   return (
     <div className="flex flex-col space-y-2">
       {comments.map((comment) => {
