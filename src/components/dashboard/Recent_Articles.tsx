@@ -22,64 +22,102 @@ interface RecentarticlesType {
     };
   }>[];
 }
+
 const RecentArticles: React.FC<RecentarticlesType> = ({ articles }) => {
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md mx-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md mx-2 sm:mx-6 w-full">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
+        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
           Recent Articles
         </h1>
       </div>
+
+      {/* No Articles Found */}
       {!articles.length ? (
-        <div className="flex justify-center items-center">
-          <p className="text-2xl">No Articles Found</p>
+        <div className="flex justify-center items-center py-10">
+          <p className="text-xl sm:text-2xl font-medium dark:text-gray-300">
+            No Articles Found
+          </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <Table className="min-w-full border border-gray-200 dark:border-gray-700">
+        <div className="overflow-x-auto w-full rounded-md border border-gray-200 dark:border-gray-700">
+          <Table className="min-w-max sm:min-w-full">
+            {/* Table Header */}
             <TableHeader className="bg-gray-100 dark:bg-gray-800">
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Comments</TableHead>
-                <TableHead>Likes</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3">
+                  Title
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3">
+                  Status
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3">
+                  Comments
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3">
+                  Likes
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3">
+                  Date
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-3 text-center">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
 
+            {/* Table Body */}
             <TableBody>
-              {articles.map((article) => {
-                return (
-                  <TableRow key={article.id} className="border-b">
-                    <TableCell>{article.title}</TableCell>
-                    <TableCell>
-                      <span className="text-blue-500 font-medium"></span>
-                      <Button className="flex items-center gap-2 mg-black">
-                        Published
-                      </Button>
-                    </TableCell>
-                    <TableCell>{article.comments.length}</TableCell>
-                    <TableCell>{article.likes.length}</TableCell>
-                    <TableCell>{article.createdAt.toDateString()}</TableCell>
-                    <TableCell className="flex gap-x-4">
+              {articles.map((article) => (
+                <TableRow
+                  key={article.id}
+                  className="border-b dark:border-gray-700"
+                >
+                  <TableCell className="max-w-[140px] sm:max-w-[200px] truncate">
+                    {article.title}
+                  </TableCell>
+
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1"
+                    >
+                      Published
+                    </Button>
+                  </TableCell>
+
+                  <TableCell>{article.comments.length}</TableCell>
+                  <TableCell>{article.likes.length}</TableCell>
+
+                  <TableCell>
+                    <span className="whitespace-nowrap text-sm">
+                      {article.createdAt.toDateString()}
+                    </span>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="flex flex-wrap justify-center gap-2">
                       <Link
                         href={`/dashboard/articles/editarticle/${article.id}`}
+                        className="w-full sm:w-auto"
                       >
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="bg-green-600 text-white"
+                          className="bg-green-600 text-white hover:bg-green-700 w-full sm:w-auto"
                         >
                           Edit
                         </Button>
                       </Link>
-                      <DeleteButton articleId={article.id} />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+
+                      <div className="w-full sm:w-auto">
+                        <DeleteButton articleId={article.id} />
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
